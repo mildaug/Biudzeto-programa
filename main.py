@@ -58,12 +58,18 @@ class Biudzetas:
 
 biudzetas = Biudzetas()
 
-#nera klases metodai
 def ivesti_pajamas(biudzetas):
-    pass
+    inesta_suma = int(input('Inesta suma: '))
+    operacijos_komentaras = input('Operacijos komentaras: ')
+    siuntejas = input('Siuntejas: ')
 
 def ivesti_islaidas(biudzetas):
-    pass
+    isimta_suma = int(input('Isimta suma: '))
+    operacijos_komentaras = input('Operacijos komentaras: ')
+    siuntejas = input('Siuntejas: ')
+
+def __str__(self):
+    return f'Jus ivedete: {biudzetas.ivesti_pajamas}, jusu balansas {Irasas.balansas}'
 
 
 while True:
