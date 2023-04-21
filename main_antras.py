@@ -46,8 +46,10 @@ class Biudzetas:
         """
         pajamos = sum([irasas.suma for irasas in self.zurnalas if isinstance(irasas, Pajamos)])
         islaidos = sum([irasas.suma for irasas in self.zurnalas if isinstance(irasas, Islaidos)])
+        print(f'Pajamos: {pajamos}')
+        print(f'Išlaidos: {islaidos}')
         if islaidos > pajamos:
-            print(f"Jūsų išlaidos {islaidos} viršija jūsų {biudzetas}")
+            print("Išlaidos viršija pajamas.")
         return pajamos - islaidos
     
     def get_balansas_string(self) -> str:
@@ -57,7 +59,7 @@ class Biudzetas:
         """
         balansas = self.balansas()
         if len(self.zurnalas) == 0:
-            return "\033[1;31;40mJūsų biudžeto sąrašas yra tuščias..\033[0m"
+            return "\033[1;31;40mBiudžeto sąrašas yra tuščias..\033[0m"
         else:
             return f"\033[1;32;40m-=Bendras balansas\033[0m: {balansas:.2f} €."
     
