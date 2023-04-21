@@ -126,5 +126,3 @@ while True:
         break
     else:
         print("\n\033[1;31;40mNeteisingas pasirinkimas, bandykite dar kartą!\033[0m\n")
-
-
