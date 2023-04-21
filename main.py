@@ -33,13 +33,13 @@ class Biudzetas:
         """
         Atspausdina biudžeto žurnalą.
         """
-        print(biudzetas.get_balansas_string())
+        print(round(biudzetas.get_balansas(), 2))
         for irasas in self.zurnalas:
             if isinstance(irasas, Pajamos):
                 print("")
-                print(f'\033[1;32;40m-=Pajamos\033[0m: Suma: {irasas.suma} €, komentaras: {irasas.komentaras}, siuntėjas: {irasas.siuntejas}')
+                print(f'\033[1;32;40m-=Pajamos\033[0m: Suma: {irasas.suma:.2f} €, komentaras: {irasas.komentaras}, siuntėjas: {irasas.siuntejas}')
             elif isinstance(irasas, Islaidos):
-                print(f'\033[1;31;40m-=Išlaidos\033[0m: Suma: {irasas.suma} €, komentaras: {irasas.komentaras}, gavėjas: {irasas.gavejas}')
+                print(f'\033[1;31;40m-=Išlaidos\033[0m: Suma: {irasas.suma:.2f} €, komentaras: {irasas.komentaras}, gavėjas: {irasas.gavejas}')
 
     def balansas(self):
         """
@@ -47,7 +47,10 @@ class Biudzetas:
         """
         pajamos = sum([irasas.suma for irasas in self.zurnalas if isinstance(irasas, Pajamos)])
         islaidos = sum([irasas.suma for irasas in self.zurnalas if isinstance(irasas, Islaidos)])
-        return pajamos - islaidos
+        if islaidos > pajamos:
+            return str (f"Jūsų išlaidos {islaidos} viršija jūsų {biudzetas}")
+        else:
+            return pajamos - islaidos
     
     def get_balansas_string(self) -> str:
         """
@@ -55,10 +58,10 @@ class Biudzetas:
         Returns a string indicating the current balance of the budget.
         """
         balansas = self.balansas()
-        if balansas == 0:
+        if len(self.zurnalas) == 0:
             return "\033[1;31;40mJūsų biudžeto sąrašas yra tuščias..\033[0m"
         else:
-            return f"\033[1;32;40m-=Bendras balansas\033[0m: {balansas} €"
+            return f"\033[1;32;40m-=Bendras balansas\033[0m: {balansas:.2f} €."
     
     def ivesti_pajamas(self, irasas):
         self.zurnalas.append(irasas)
@@ -75,19 +78,19 @@ def ivesti_pajamas(biudzetas: Biudzetas) -> None:
     siuntejas = input("-->>> ")
     print("Įveskite komentarą ir spauskite 'Enter':")
     komentaras = input("-->>> ")
-    pajamos = Pajamos(suma, komentaras, siuntejas)
+    pajamos = Pajamos(round(suma,2), komentaras, siuntejas)
     biudzetas.ivesti_pajamas(pajamos)
     print("")
-    print(f"Pajamos {suma} € buvo pridėtos prie biudžeto.")
+    print(f"Pajamos {round(suma,2)} € buvo pridėtos prie biudžeto.")
     print(biudzetas.get_balansas_string())
 
 def ivesti_islaidas(biudzetas: Biudzetas) -> None:
     suma = float(input("Įveskite išlaidų sumą: "))
     gavejas = input("Įveskite išlaidų gavėją: ")
     komentaras = input("Įveskite komentarą: ")
-    islaidos = Islaidos(suma, komentaras, gavejas)
+    islaidos = Islaidos(round(suma,2), komentaras, gavejas)
     biudzetas.ivesti_pajamas(islaidos)
-    print(f"Įšlaidos {suma} € buvo išimta iš biudžeto.")
+    print(f"Išlaidos {round(suma,2)} € buvo išimta iš biudžeto.")
     print(biudzetas.get_balansas_string())
 
 while True:
