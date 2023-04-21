@@ -27,55 +27,61 @@ class Pajamos(Irasas):
 
 
 class Biudzetas:
-    zurnalas = []
+    __zurnalas = []
 
+    def __balansas(self):
+        pajamos = sum([irasas.suma for irasas in self.__zurnalas if isinstance(irasas, Pajamos)])
+        islaidos = sum([irasas.suma for irasas in self.__zurnalas if isinstance(irasas, Islaidos)])
+        if islaidos > pajamos:
+            print(f"Jūsų išlaidos {islaidos} viršija jūsų {biudzetas}")
+        return pajamos - islaidos
+    
     def ataskaita(self) -> str:
         """
         Atspausdina biudžeto žurnalą.
         """
-        print(biudzetas.get_balansas_string())
-        for irasas in self.zurnalas:
+        print(self.get_balansas_string())
+        for irasas in self.__zurnalas:
             if isinstance(irasas, Pajamos):
                 print(f'\033[1;32;40m-=Pajamos\033[0m: Suma: {irasas.suma:.2f} €, komentaras: {irasas.komentaras}, siuntėjas: {irasas.siuntejas}')
             elif isinstance(irasas, Islaidos):
                 print(f'\033[1;31;40m-=Išlaidos\033[0m: Suma: {irasas.suma:.2f} €, komentaras: {irasas.komentaras}, gavėjas: {irasas.gavejas}')
 
-    def balansas(self):
-        """
-        Atspausdina balansą.
-        """
-        pajamos = sum([irasas.suma for irasas in self.zurnalas if isinstance(irasas, Pajamos)])
-        islaidos = sum([irasas.suma for irasas in self.zurnalas if isinstance(irasas, Islaidos)])
-        if islaidos > pajamos:
-            print(f"Jūsų išlaidos {islaidos} viršija jūsų {biudzetas}")
-        return pajamos - islaidos
-    
+    def ivesti_pajamas(self, irasas):
+        self.__zurnalas.append(irasas)
+        
     def get_balansas_string(self) -> str:
         """
         Grąžina eilutę, nurodančią dabartinį biudžeto balansą
         Returns a string indicating the current balance of the budget.
         """
-        balansas = self.balansas()
-        if len(self.zurnalas) == 0:
+        balansas = self.__balansas()
+        if len(self.__zurnalas) == 0:
             return "\033[1;31;40mJūsų biudžeto sąrašas yra tuščias..\033[0m"
         else:
             return f"\033[1;32;40m-=Bendras balansas\033[0m: {balansas:.2f} €."
     
     def ivesti_pajamas(self, irasas):
-        self.zurnalas.append(irasas)
+        self.__zurnalas.append(irasas)
 
 
 biudzetas = Biudzetas()
 
 
 def ivesti_pajamas(biudzetas: Biudzetas) -> None:
-    print("")
-    print("Įveskite \033[1;32;40m gautų \033[0m pajamų sumą pvz. 1250.04 ir spauskite 'Enter':")
-    suma = float(input("-->>> "))
-    print("Įveskite pajamų siuntėją ir spauskite 'Enter':")
-    siuntejas = input("-->>> ")
-    print("Įveskite komentarą ir spauskite 'Enter':")
-    komentaras = input("-->>> ")
+    while True:
+        try:
+            print("")
+            print("Įveskite \033[1;32;40m gautų \033[0m pajamų sumą pvz. 1250.04 ir spauskite 'Enter':")
+            suma = float(input("-->>> "))
+            if suma < 0:
+                raise ValueError("Pajamų suma negali būti neigiama!")
+            break
+        except ValueError as e:
+            print(e)
+            
+    siuntejas = input("Įveskite pajamų siuntėją ir spauskite 'Enter': ")
+    komentaras = input("Įveskite komentarą ir spauskite 'Enter': ")
     pajamos = Pajamos(suma, komentaras, siuntejas)
     biudzetas.ivesti_pajamas(pajamos)
     print("")
@@ -83,7 +89,15 @@ def ivesti_pajamas(biudzetas: Biudzetas) -> None:
     print(biudzetas.get_balansas_string())
 
 def ivesti_islaidas(biudzetas: Biudzetas) -> None:
-    suma = float(input("Įveskite išlaidų sumą: "))
+    while True:
+        try:
+            suma = float(input("Įveskite išlaidų sumą: "))
+            if suma < 0:
+                raise ValueError("Išlaidų suma negali būti neigiama!")
+            break
+        except ValueError as e:
+            print(e)
+            
     gavejas = input("Įveskite išlaidų gavėją: ")
     komentaras = input("Įveskite komentarą: ")
     islaidos = Islaidos(suma, komentaras, gavejas)
@@ -100,7 +114,7 @@ while True:
  
     print("\t\033[1;31;40m0\033[0m. Uždaryti programą\n")
     meniu = int(input('Įveskite pasirinkimą \033[1;32;40m1\033[0m, \033[1;32;40m2\033[0m, \033[1;32;40m3\033[0m arba \033[1;31;40m0\033[0m ir spauskite "Enter": '))
-
+    
     if meniu == 1:
         ivesti_pajamas(biudzetas)
     elif meniu == 2:
